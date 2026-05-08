@@ -60,21 +60,32 @@ function App() {
 
   return (
     <>
-      {/* Ad 1: Leaderboard — full viewport width, very top */}
+      {/* Hero */}
+      <section className="hero">
+        <div className="hero-inner">
+          <h1>Pallet Blueprint Generator</h1>
+          <p className="hero-sub">Design, dimension, and export custom wooden pallet drawings in seconds. Set your specs, get a full annotated isometric view instantly.</p>
+          <div className="hero-tags">
+            <span className="hero-tag">Isometric 3D View</span>
+            <span className="hero-tag">Dimension Annotations</span>
+            <span className="hero-tag">Export PNG</span>
+            <span className="hero-tag">Bill of Materials</span>
+          </div>
+          <button className="hero-cta" onClick={() => document.getElementById('tool').scrollIntoView({ behavior: 'smooth' })}>
+            Start Designing ↓
+          </button>
+        </div>
+      </section>
+
+      {/* Ad 1: Leaderboard — full viewport width, below hero */}
       <div className="ad-top-bar">
         <AdSlot size="leaderboard" slot="SLOT_ID_1" />
       </div>
 
       <div className="app-container">
 
-        {/* Title — compact, sits below the ad */}
-        <header className="header-compact">
-          <h1>Pallet Blueprint Generator</h1>
-          <p>Fully customizable pallet dimensional drawing</p>
-        </header>
-
         {/* Horizontal input bar — all controls visible in one row */}
-        <div className="input-bar">
+        <div className="input-bar" id="tool">
 
           {/* Unit toggle + Export */}
           <div className="unit-export">

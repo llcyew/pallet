@@ -58,6 +58,76 @@ input:focus, select:focus {
   outline-offset: -1px;
 }
 
+/* ── Hero ─────────────────────────────────────────── */
+
+.hero {
+  background: var(--text-primary);
+  color: var(--bg-primary);
+  padding: 80px 24px 72px;
+  text-align: center;
+  width: 100%;
+}
+
+.hero-inner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.hero h1 {
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  margin-bottom: 20px;
+  color: var(--bg-primary);
+}
+
+.hero-sub {
+  font-size: 1.05rem;
+  line-height: 1.65;
+  opacity: 0.62;
+  margin-bottom: 36px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hero-tags {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 44px;
+}
+
+.hero-tag {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.5;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  padding: 5px 13px;
+  border-radius: 2px;
+}
+
+.hero-cta {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: none;
+  padding: 14px 40px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.hero-cta:hover {
+  background: #e0e0e0;
+  color: var(--text-primary);
+}
+
 /* ── App container ────────────────────────────────── */
 
 .app-container {
@@ -292,6 +362,8 @@ input:focus, select:focus {
 /* ── Responsive ───────────────────────────────────── */
 
 @media (max-width: 700px) {
+  .hero { padding: 52px 20px 48px; }
+
   .app-container {
     padding: 0 16px 32px;
   }
