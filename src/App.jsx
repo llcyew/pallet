@@ -67,18 +67,19 @@ function App() {
   }
 
   return (
-    <div className="app-container">
-      <header className="header">
-        <h1>Pallet Blueprint Generator</h1>
-        <p>Fully customizable pallet dimensional drawing</p>
-      </header>
-
-      {/* Ad Slot 1: Leaderboard below header */}
-      <div className="ad-row">
+    <>
+      {/* Ad Slot 1: Full-width leaderboard above app content */}
+      <div className="ad-top-bar">
         <AdSlot size="leaderboard" slot="SLOT_ID_1" />
       </div>
 
-      <main className="main-layout">
+      <div className="app-container">
+        <header className="header">
+          <h1>Pallet Blueprint Generator</h1>
+          <p>Fully customizable pallet dimensional drawing</p>
+        </header>
+
+        <main className="main-layout">
         <aside className="controls-sidebar">
           <div className="unit-selector">
             <button className={`unit-btn ${unit === 'mm' ? 'active' : ''}`} onClick={() => handleUnitChange('mm')}>mm</button>
@@ -191,8 +192,9 @@ function App() {
           {/* Ad Slot 4: Banner below BOM table */}
           <AdSlot size="banner" slot="SLOT_ID_4" />
         </section>
-      </main>
-    </div>
+        </main>
+      </div>
+    </>
   )
 }
 
