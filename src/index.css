@@ -180,6 +180,72 @@ input:focus, select:focus {
   background: var(--bg-secondary);
 }
 
+/* ── Ad Slots ─────────────────────────────── */
+
+.ad-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 32px;
+}
+
+.ad-sidebar-slot {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+}
+
+.ad-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border: 1px dashed #aaa;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.ad-slot__label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.ad-slot__size {
+  font-size: 0.75rem;
+  color: #bbb;
+}
+
+.ad-slot--leaderboard {
+  height: 90px;
+}
+
+.ad-slot--banner {
+  height: 90px;
+  width: 100%;
+}
+
+.ad-slot--rectangle {
+  width: 300px;
+  height: 250px;
+}
+
+@media (max-width: 900px) {
+  .ad-slot--leaderboard {
+    height: 60px;
+  }
+  .ad-slot--rectangle {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+/* ─────────────────────────────────────────── */
+
 .unit-selector {
   display: flex;
   gap: 10px;

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import './index.css'
 import PalletVisualizer from './components/PalletVisualizer'
+import AdSlot from './components/AdSlot'
 
 function App() {
   const [unit, setUnit] = useState('mm')
@@ -72,6 +73,11 @@ function App() {
         <p>Fully customizable pallet dimensional drawing</p>
       </header>
 
+      {/* Ad Slot 1: Leaderboard below header */}
+      <div className="ad-row">
+        <AdSlot size="leaderboard" slot="SLOT_ID_1" />
+      </div>
+
       <main className="main-layout">
         <aside className="controls-sidebar">
           <div className="unit-selector">
@@ -141,11 +147,19 @@ function App() {
           </div>
           
           <button className="btn-primary" onClick={exportPNG}>Export PNG</button>
+
+          {/* Ad Slot 2: Rectangle below Export button */}
+          <div className="ad-sidebar-slot">
+            <AdSlot size="rectangle" slot="SLOT_ID_2" />
+          </div>
         </aside>
 
         <section className="visualizer-area">
           <PalletVisualizer dimensions={dimensions} unit={unit} />
           
+          {/* Ad Slot 3: Banner between visualizer and BOM table */}
+          <AdSlot size="banner" slot="SLOT_ID_3" />
+
           <div className="view-card">
             <table className="bom-table">
               <thead>
@@ -174,6 +188,8 @@ function App() {
               </tbody>
             </table>
           </div>
+          {/* Ad Slot 4: Banner below BOM table */}
+          <AdSlot size="banner" slot="SLOT_ID_4" />
         </section>
       </main>
     </div>
