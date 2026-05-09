@@ -151,6 +151,7 @@ const PalletVisualizer = ({ dimensions, unit }) => {
   const leftOx = -dirX.x * ext * 1.2, leftOy = -dirX.y * ext * 1.2;
   const frontOx = dirZ.x * ext * 1.1, frontOy = dirZ.y * ext * 1.1;
   const rightOx = dirX.x * ext * 1.6, rightOy = dirX.y * ext * 1.6;
+  const rightInnerOx = dirX.x * ext * 1.1, rightInnerOy = dirX.y * ext * 1.1;
 
   const dims = [];
 
@@ -163,27 +164,28 @@ const PalletVisualizer = ({ dimensions, unit }) => {
 
   // Detailed Top Board
   if (topBoardCount > 0) {
-    dims.push(dimLine3D('TBW', {x:0,y:totalH,z:0}, {x:0,y:totalH,z:topBoardWidth}, leftOx, leftOy, `W: ${topBoardWidth.toFixed(0)} ${unit}`));
+    const midX = width / 2;
+    dims.push(dimLine3D('TBW', {x:midX,y:totalH,z:0}, {x:midX,y:totalH,z:topBoardWidth}, 0, 0, `W: ${topBoardWidth.toFixed(0)} ${unit}`));
     if (topBoardCount > 1) {
-      dims.push(dimLine3D('TBG', {x:0,y:totalH,z:topBoardWidth}, {x:0,y:totalH,z:topBoardWidth+topSpacing}, leftOx, leftOy, `Gap: ${topSpacing.toFixed(0)} ${unit}`));
+      dims.push(dimLine3D('TBG', {x:midX,y:totalH,z:topBoardWidth}, {x:midX,y:totalH,z:topBoardWidth+topSpacing}, 0, 0, `Gap: ${topSpacing.toFixed(0)} ${unit}`));
     }
     dims.push(dimLine3D('TBT', {x:width,y:topBY,z:0}, {x:width,y:totalH,z:0}, rightOx, rightOy, `T: ${topBoardThickness.toFixed(0)} ${unit}`));
   }
 
   // Detailed Stringer
   if (stringerCount > 0) {
-    dims.push(dimLine3D('STW', {x:0,y:strY+stringerHeight,z:length}, {x:stringerWidth,y:strY+stringerHeight,z:length}, frontOx, frontOy, `W: ${stringerWidth.toFixed(0)} ${unit}`));
+    dims.push(dimLine3D('STW', {x:0,y:0,z:length}, {x:stringerWidth,y:0,z:length}, frontOx, frontOy, `W: ${stringerWidth.toFixed(0)} ${unit}`));
     if (stringerCount > 1) {
-      dims.push(dimLine3D('STG', {x:stringerWidth,y:strY+stringerHeight,z:length}, {x:stringerWidth+strSpacing,y:strY+stringerHeight,z:length}, frontOx, frontOy, `Gap: ${strSpacing.toFixed(0)} ${unit}`));
+      dims.push(dimLine3D('STG', {x:stringerWidth,y:0,z:length}, {x:stringerWidth+strSpacing,y:0,z:length}, frontOx, frontOy, `Gap: ${strSpacing.toFixed(0)} ${unit}`));
     }
     dims.push(dimLine3D('STH', {x:width,y:strY,z:0}, {x:width,y:strY+stringerHeight,z:0}, rightOx, rightOy, `H: ${stringerHeight.toFixed(0)} ${unit}`));
   }
 
   // Detailed Bottom Board
   if (bottomBoardCount > 0) {
-    dims.push(dimLine3D('BBW', {x:0,y:bottomBoardThickness,z:0}, {x:0,y:bottomBoardThickness,z:bottomBoardWidth}, leftOx, leftOy, `W: ${bottomBoardWidth.toFixed(0)} ${unit}`));
+    dims.push(dimLine3D('BBW', {x:width,y:bottomBoardThickness,z:0}, {x:width,y:bottomBoardThickness,z:bottomBoardWidth}, rightInnerOx, rightInnerOy, `W: ${bottomBoardWidth.toFixed(0)} ${unit}`));
     if (bottomBoardCount > 1) {
-      dims.push(dimLine3D('BBG', {x:0,y:bottomBoardThickness,z:bottomBoardWidth}, {x:0,y:bottomBoardThickness,z:bottomBoardWidth+botSpacing}, leftOx, leftOy, `Gap: ${botSpacing.toFixed(0)} ${unit}`));
+      dims.push(dimLine3D('BBG', {x:width,y:bottomBoardThickness,z:bottomBoardWidth}, {x:width,y:bottomBoardThickness,z:bottomBoardWidth+botSpacing}, rightInnerOx, rightInnerOy, `Gap: ${botSpacing.toFixed(0)} ${unit}`));
     }
     dims.push(dimLine3D('BBT', {x:width,y:0,z:0}, {x:width,y:bottomBoardThickness,z:0}, rightOx, rightOy, `T: ${bottomBoardThickness.toFixed(0)} ${unit}`));
   }
