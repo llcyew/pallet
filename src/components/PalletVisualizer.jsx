@@ -37,6 +37,14 @@ const PalletVisualizer = ({ dimensions, unit }) => {
   const topSpacing = topBoardCount > 1
     ? (length - topBoardCount * topBoardWidth) / (topBoardCount - 1) : 0;
 
+  let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+  const registerPt = (x, y) => {
+    if (x < minX) minX = x;
+    if (x > maxX) maxX = x;
+    if (y < minY) minY = y;
+    if (y > maxY) maxY = y;
+  };
+
   // ── Box with shaded faces ─────────────────────────────────────────────────
   const box = (x, y, z, w, h, d, key, c) => {
     const A = proj(x,   y+h, z  );
@@ -46,6 +54,8 @@ const PalletVisualizer = ({ dimensions, unit }) => {
     const E = proj(x,   y,   z+d);
     const F = proj(x+w, y,   z+d);
     const G = proj(x+w, y,   z  );
+
+    [A,B,C,D,E,F,G].forEach(p => registerPt(p.x, p.y));
 
     const top  = `M${A.x},${A.y} L${B.x},${B.y} L${C.x},${C.y} L${D.x},${D.y}Z`;
     const face = `M${D.x},${D.y} L${E.x},${E.y} L${F.x},${F.y} L${C.x},${C.y}Z`;
@@ -81,12 +91,14 @@ const PalletVisualizer = ({ dimensions, unit }) => {
   const fs  = Math.max(22, maxDim * 0.031);
   const sw  = Math.max(0.8, maxDim * 0.0013);
   const ext = maxDim * 0.13;
-  const rowH = fs * 2.5;
 
   // ── SVG text+bg label ────────────────────────────────────────────────────
   const lbl = (key, cx, cy, text) => {
     const tw = text.length * fs * 0.54 + fs * 0.6;
     const th = fs * 1.5;
+    registerPt(cx - tw/2, cy - th/2);
+    registerPt(cx + tw/2, cy + th/2);
+
     return (
       <g key={key}>
         <rect x={cx-tw/2} y={cy-th/2} width={tw} height={th}
@@ -104,6 +116,9 @@ const PalletVisualizer = ({ dimensions, unit }) => {
   const dimLine = (key, ax, ay, bx, by, ox, oy, text) => {
     const sx = ax+ox, sy = ay+oy, ex = bx+ox, ey = by+oy;
     const mx = (sx+ex)/2, my = (sy+ey)/2;
+    registerPt(ax, ay); registerPt(bx, by);
+    registerPt(sx, sy); registerPt(ex, ey);
+
     return (
       <g key={key} fill="none">
         <line x1={ax} y1={ay} x2={sx} y2={sy}
@@ -120,173 +135,75 @@ const PalletVisualizer = ({ dimensions, unit }) => {
     );
   };
 
-  // ── Leader line with dot (3D source → 2D label) ───────────────────────────
-  const leader = (key, pt3, lx, ly, text) => {
-    const pt = proj(pt3.x, pt3.y, pt3.z);
-    return (
-      <g key={key} fill="none">
-        <circle cx={pt.x} cy={pt.y} r={sw*2.5} fill={TONE.dim} stroke="none" />
-        <line x1={pt.x} y1={pt.y} x2={lx} y2={ly}
-          stroke={TONE.dim} strokeWidth={sw} />
-        {lbl(key+'l', lx, ly, text)}
-      </g>
-    );
+  const dimLine3D = (key, ptA, ptB, ox, oy, text) => {
+    const pA = proj(ptA.x, ptA.y, ptA.z);
+    const pB = proj(ptB.x, ptB.y, ptB.z);
+    return dimLine(key, pA.x, pA.y, pB.x, pB.y, ox, oy, text);
   };
 
-  // ── Key 2D corners ────────────────────────────────────────────────────────
-  const pRB  = proj(width, 0,      0);       // right-back-bottom
-  const pRF  = proj(width, 0,      length);  // right-front-bottom
-  const pLF  = proj(0,     0,      length);  // left-front-bottom
-  const pRT  = proj(width, totalH, 0);       // right-back-top
+  const dirX = { x: COS30, y: SIN30 };
+  const dirZ = { x: -COS30, y: SIN30 };
 
-  // ── Overall dimension lines ───────────────────────────────────────────────
-  // Length: right edge (x=width, z: 0→length), offset toward lower-right
-  const lOx = COS30*ext*1.6, lOy = SIN30*ext*1.6;
-  // Width: front edge (z=length, x: 0→width), offset toward lower-left
-  const wOx = -COS30*ext*1.4, wOy = SIN30*ext*1.4;
-  // Height: right edge (x=width, z=0, y: 0→totalH), offset to far-right
-  const hOx = COS30*ext*3.2, hOy = SIN30*ext*3.2;
+  const lOx = dirX.x * ext * 2.2, lOy = dirX.y * ext * 2.2;
+  const wOx = dirZ.x * ext * 2.2, wOy = dirZ.y * ext * 2.2;
+  const hOx = dirX.x * ext * 3.6, hOy = dirX.y * ext * 3.6;
 
-  const overallDims = [
-    dimLine('OL', pRB.x, pRB.y, pRF.x, pRF.y, lOx, lOy,
-      `L: ${length.toFixed(0)} ${unit}`),
-    dimLine('OW', pLF.x, pLF.y, pRF.x, pRF.y, wOx, wOy,
-      `W: ${width.toFixed(0)} ${unit}`),
-    dimLine('OH', pRB.x, pRB.y, pRT.x, pRT.y, hOx, hOy,
-      `H: ${totalH.toFixed(0)} ${unit}`),
-  ];
+  const leftOx = -dirX.x * ext * 1.2, leftOy = -dirX.y * ext * 1.2;
+  const frontOx = dirZ.x * ext * 1.1, frontOy = dirZ.y * ext * 1.1;
+  const rightOx = dirX.x * ext * 1.6, rightOy = dirX.y * ext * 1.6;
 
-  // ── LEFT COLUMN leaders ───────────────────────────────────────────────────
-  // Points to: top-face edges (top boards), front face (stringers/bottom boards)
-  // Labels stack downward starting just above the front-left corner
+  const dims = [];
 
-  const leftColX = pLF.x - ext * 2.1;
-  // Start y: near the top surface of the pallet, projected to the left front corner
-  const pTopLeft = proj(0, totalH, length);
-  let lY = pTopLeft.y - ext * 0.3;
+  // Overall Length
+  dims.push(dimLine3D('OL', {x:width,y:0,z:0}, {x:width,y:0,z:length}, lOx, lOy, `L: ${length.toFixed(0)} ${unit}`));
+  // Overall Width
+  dims.push(dimLine3D('OW', {x:0,y:0,z:length}, {x:width,y:0,z:length}, wOx, wOy, `W: ${width.toFixed(0)} ${unit}`));
+  // Overall Height
+  dims.push(dimLine3D('OH', {x:width,y:0,z:0}, {x:width,y:totalH,z:0}, hOx, hOy, `H: ${totalH.toFixed(0)} ${unit}`));
 
-  const leftLeaders = [];
-
+  // Detailed Top Board
   if (topBoardCount > 0) {
-    // Top board width — point to left edge of top surface of first board
-    leftLeaders.push(leader('TBW',
-      { x: 0, y: topBY + topBoardThickness, z: topBoardWidth * 0.5 },
-      leftColX, lY,
-      `Top Board: ${topBoardWidth.toFixed(0)} ${unit}`
-    ));
-    lY += rowH;
-
+    dims.push(dimLine3D('TBW', {x:0,y:totalH,z:0}, {x:0,y:totalH,z:topBoardWidth}, leftOx, leftOy, `W: ${topBoardWidth.toFixed(0)} ${unit}`));
     if (topBoardCount > 1) {
-      // Top gap — left edge of top surface in the gap area
-      leftLeaders.push(leader('TBG',
-        { x: 0, y: topBY + topBoardThickness, z: topBoardWidth + topSpacing * 0.5 },
-        leftColX, lY,
-        `Top Gap: ${topSpacing.toFixed(0)} ${unit}`
-      ));
-      lY += rowH;
+      dims.push(dimLine3D('TBG', {x:0,y:totalH,z:topBoardWidth}, {x:0,y:totalH,z:topBoardWidth+topSpacing}, leftOx, leftOy, `Gap: ${topSpacing.toFixed(0)} ${unit}`));
     }
+    dims.push(dimLine3D('TBT', {x:width,y:topBY,z:0}, {x:width,y:totalH,z:0}, rightOx, rightOy, `T: ${topBoardThickness.toFixed(0)} ${unit}`));
   }
 
-  lY += rowH * 0.35; // section gap
-
+  // Detailed Stringer
   if (stringerCount > 0) {
-    // Stringer width — front face of first stringer
-    leftLeaders.push(leader('STW',
-      { x: stringerWidth * 0.5, y: strY + stringerHeight * 0.5, z: length },
-      leftColX, lY,
-      `Stringer W: ${stringerWidth.toFixed(0)} ${unit}`
-    ));
-    lY += rowH;
-
+    dims.push(dimLine3D('STW', {x:0,y:strY+stringerHeight,z:length}, {x:stringerWidth,y:strY+stringerHeight,z:length}, frontOx, frontOy, `W: ${stringerWidth.toFixed(0)} ${unit}`));
     if (stringerCount > 1) {
-      // Stringer gap — front face, between stringers
-      leftLeaders.push(leader('STG',
-        { x: stringerWidth + strSpacing * 0.5, y: strY + stringerHeight * 0.5, z: length },
-        leftColX, lY,
-        `Stringer Gap: ${strSpacing.toFixed(0)} ${unit}`
-      ));
-      lY += rowH;
+      dims.push(dimLine3D('STG', {x:stringerWidth,y:strY+stringerHeight,z:length}, {x:stringerWidth+strSpacing,y:strY+stringerHeight,z:length}, frontOx, frontOy, `Gap: ${strSpacing.toFixed(0)} ${unit}`));
     }
+    dims.push(dimLine3D('STH', {x:width,y:strY,z:0}, {x:width,y:strY+stringerHeight,z:0}, rightOx, rightOy, `H: ${stringerHeight.toFixed(0)} ${unit}`));
   }
 
-  lY += rowH * 0.35;
-
+  // Detailed Bottom Board
   if (bottomBoardCount > 0) {
-    // Bottom board width — front face of first bottom board
-    leftLeaders.push(leader('BTW',
-      { x: width * 0.4, y: bottomBoardThickness * 0.5, z: bottomBoardWidth },
-      leftColX, lY,
-      `Btm Board: ${bottomBoardWidth.toFixed(0)} ${unit}`
-    ));
-    lY += rowH;
-
+    dims.push(dimLine3D('BBW', {x:0,y:bottomBoardThickness,z:0}, {x:0,y:bottomBoardThickness,z:bottomBoardWidth}, leftOx, leftOy, `W: ${bottomBoardWidth.toFixed(0)} ${unit}`));
     if (bottomBoardCount > 1) {
-      leftLeaders.push(leader('BTG',
-        { x: width * 0.4, y: bottomBoardThickness * 0.5, z: bottomBoardWidth + botSpacing * 0.5 },
-        leftColX, lY,
-        `Btm Gap: ${botSpacing.toFixed(0)} ${unit}`
-      ));
-      lY += rowH;
+      dims.push(dimLine3D('BBG', {x:0,y:bottomBoardThickness,z:bottomBoardWidth}, {x:0,y:bottomBoardThickness,z:bottomBoardWidth+botSpacing}, leftOx, leftOy, `Gap: ${botSpacing.toFixed(0)} ${unit}`));
     }
+    dims.push(dimLine3D('BBT', {x:width,y:0,z:0}, {x:width,y:bottomBoardThickness,z:0}, rightOx, rightOy, `T: ${bottomBoardThickness.toFixed(0)} ${unit}`));
   }
 
-  // ── RIGHT COLUMN leaders ──────────────────────────────────────────────────
-  // Points to right face (x=width, z=topBoardWidth/2) for thickness/height.
-  // Labels placed at explicit rows below the Overall-H dim line.
-
-  // Overall-H dim line label lands near (pRB.x + hOx, midY + hOy)
-  // Place right column further right to avoid overlap.
-  const rightColX = pRB.x + COS30 * ext * 5.2;
-  // Start right column y at the top of the pallet on the right side
-  let rY = pRT.y + SIN30 * ext * 3.2 - rowH * 0.5;
-
-  const rightLeaders = [];
-
-  if (topBoardCount > 0) {
-    rightLeaders.push(leader('TTK',
-      { x: width, y: topBY + topBoardThickness * 0.5, z: topBoardWidth * 0.5 },
-      rightColX, rY,
-      `Top Thick: ${topBoardThickness.toFixed(0)} ${unit}`
-    ));
-    rY += rowH;
+  if (minX === Infinity) {
+    minX = 0; maxX = 100; minY = 0; maxY = 100;
   }
 
-  if (stringerCount > 0) {
-    // Target the rightmost stringer's right face
-    const rightStrX = (stringerCount - 1) * (stringerWidth + strSpacing) + stringerWidth;
-    rightLeaders.push(leader('STH',
-      { x: rightStrX, y: strY + stringerHeight * 0.5, z: topBoardWidth * 0.5 },
-      rightColX, rY,
-      `Stringer H: ${stringerHeight.toFixed(0)} ${unit}`
-    ));
-    rY += rowH;
-  }
-
-  if (bottomBoardCount > 0) {
-    rightLeaders.push(leader('BTK',
-      { x: width, y: bottomBoardThickness * 0.5, z: topBoardWidth * 0.5 },
-      rightColX, rY,
-      `Btm Thick: ${bottomBoardThickness.toFixed(0)} ${unit}`
-    ));
-    rY += rowH;
-  }
-
-  // ── ViewBox — fits all elements with margins ──────────────────────────────
-  const lblHalfW = maxDim * 0.22;
-  const leftEdge  = leftColX  - lblHalfW;
-  const rightEdge = rightColX + lblHalfW;
-  const topEdge   = Math.min(pRT.y, pTopLeft.y) - ext * 1.2;
-  const botEdge   = Math.max(pRF.y + lOy + rowH, lY + rowH * 0.5) + ext * 0.8;
-
-  const vbW = rightEdge - leftEdge;
-  const vbH = botEdge   - topEdge;
+  const pad = maxDim * 0.15;
+  const vbW = maxX - minX + pad * 2;
+  const vbH = maxY - minY + pad * 2;
+  const vX = minX - pad;
+  const vY = minY - pad;
 
   return (
-    <div className="view-card">
-      <div className="svg-container">
+    <div className="view-card" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%' }}>
+      <div className="svg-container" style={{ width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
         <svg
-          viewBox={`${leftEdge} ${topEdge} ${vbW} ${vbH}`}
-          width="100%" height="100%"
+          viewBox={`${vX} ${vY} ${vbW} ${vbH}`}
+          style={{ maxHeight: '100%', maxWidth: '100%' }}
           xmlns="http://www.w3.org/2000/svg"
         >
           <defs>
@@ -295,11 +212,8 @@ const PalletVisualizer = ({ dimensions, unit }) => {
               <path d="M 0 0 L 10 5 L 0 10 z" fill={TONE.dim} />
             </marker>
           </defs>
-
           <g>{els}</g>
-          <g>{overallDims}</g>
-          <g>{leftLeaders}</g>
-          <g>{rightLeaders}</g>
+          <g>{dims}</g>
         </svg>
       </div>
     </div>
@@ -307,3 +221,4 @@ const PalletVisualizer = ({ dimensions, unit }) => {
 };
 
 export default PalletVisualizer;
+

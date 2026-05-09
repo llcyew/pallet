@@ -34,28 +34,36 @@ function App() {
     const svgElement = document.querySelector('.svg-container svg')
     if (!svgElement) return
 
-    const svgData = new XMLSerializer().serializeToString(svgElement)
+    const clone = svgElement.cloneNode(true)
+    const viewBox = clone.getAttribute('viewBox').split(' ')
+    const vbW = parseFloat(viewBox[2])
+    const vbH = parseFloat(viewBox[3])
+    
+    clone.setAttribute('width', vbW)
+    clone.setAttribute('height', vbH)
+
+    const svgData = new XMLSerializer().serializeToString(clone)
     const canvas = document.createElement('canvas')
     const ctx = canvas.getContext('2d')
 
-    const svgSize = svgElement.getBoundingClientRect()
-    canvas.width = svgSize.width * 2
-    canvas.height = svgSize.height * 2
-    ctx.scale(2, 2)
+    const scale = 2
+    canvas.width = vbW * scale
+    canvas.height = vbH * scale
+    ctx.scale(scale, scale)
 
     ctx.fillStyle = 'white'
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    ctx.fillRect(0, 0, vbW, vbH)
 
     const img = new Image()
     img.onload = () => {
-      ctx.drawImage(img, 0, 0, svgSize.width, svgSize.height)
-      const pngFile = canvas.toDataURL('image/png')
+      ctx.drawImage(img, 0, 0, vbW, vbH)
+      const pngFile = canvas.toDataURL('image/png', 1.0)
       const downloadLink = document.createElement('a')
       downloadLink.download = 'pallet-blueprint.png'
       downloadLink.href = pngFile
       downloadLink.click()
     }
-    img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)))
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgData)
   }
 
   return (
