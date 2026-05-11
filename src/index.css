@@ -209,28 +209,34 @@ input:focus, select:focus {
   text-align: right;
 }
 
-/* ── Unit selector + Export card ──────────────────── */
+/* ── Unit selector card ──────────────────── */
 
 .unit-export {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  min-width: 110px;
-  max-width: 130px;
-  justify-content: space-between;
+  min-width: 80px;
+  max-width: 100px;
 }
 
 .unit-selector-bar {
   display: flex;
+  flex-direction: column;
   gap: 4px;
+  height: 100%;
+  flex: 1;
 }
 
 .unit-btn-sm {
   flex: 1;
-  padding: 5px 4px;
-  font-size: 0.76rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
   border-radius: var(--radius-sm);
   text-align: center;
+  cursor: pointer;
 }
 
 .unit-btn-sm.active {
@@ -273,8 +279,67 @@ input:focus, select:focus {
 
 /* ── BOM Table ────────────────────────────────────── */
 
+/* ── BOM Table (Premium Style) ────────────────────── */
 .bom-section {
-  margin-top: 0;
+  margin: 40px 0;
+}
+
+.bom-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 24px;
+}
+
+.bom-title-group h2 {
+  font-size: 2rem;
+  margin-bottom: 6px;
+  color: #111;
+}
+
+.bom-title-group p {
+  font-size: 1.1rem;
+  color: #6b7280;
+}
+
+.bom-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.bom-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border-radius: 10px;
+  background: white;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.bom-btn:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+  color: #111;
+}
+
+.bom-card {
+  background: white;
+  border: 1px solid #f0f1f3;
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+}
+
+.bom-card-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+  color: #111;
 }
 
 .bom-table {
@@ -282,17 +347,44 @@ input:focus, select:focus {
   border-collapse: collapse;
 }
 
-.bom-table th, .bom-table td {
-  padding: 10px 14px;
+.bom-table th {
   text-align: left;
-  border: 1px solid var(--border-color);
-  font-size: 0.9rem;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f1f3;
+  color: #6b7280;
+  font-size: 0.95rem;
+  font-weight: 500;
 }
 
-.bom-table th {
-  font-weight: 600;
-  background: var(--bg-secondary);
+.bom-table td {
+  padding: 24px 0;
+  border-bottom: 1px solid #f0f1f3;
+  vertical-align: middle;
 }
+
+.bom-table tr:last-child td {
+  border-bottom: none;
+}
+
+.part-name {
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: #111;
+}
+
+.dim-val {
+  color: #6b7280;
+  font-size: 1.15rem;
+}
+
+.pieces-val {
+  font-weight: 600;
+  font-size: 1.25rem;
+  color: #111;
+  text-align: right;
+}
+
+.txt-right { text-align: right !important; }
 
 /* ── Ad Slots ─────────────────────────────────────── */
 
@@ -390,5 +482,55 @@ input:focus, select:focus {
   .ad-slot--rectangle {
     width: 100%;
     max-width: 300px;
+  }
+}
+
+/* Footer Styles */
+.app-footer {
+  margin-top: 80px;
+  padding: 40px 0;
+  border-top: 1px solid rgba(0,0,0,0.05);
+  background: #fcfcfc;
+}
+
+.footer-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #888;
+  font-size: 13px;
+}
+
+.footer-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.divider {
+  color: #ddd;
+}
+
+.tagline {
+  color: #aaa;
+  font-style: italic;
+}
+
+.version {
+  background: #f0f0f0;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: 'Roboto Mono', monospace;
+  font-size: 11px;
+}
+
+@media (max-width: 768px) {
+  .footer-content {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
   }
 }

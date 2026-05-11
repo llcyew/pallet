@@ -19,16 +19,27 @@ const TONE = {
 };
 
 const PalletVisualizer = ({ dimensions, unit }) => {
-  const {
-    length, width,
-    topBoardWidth, topBoardThickness, topBoardCount,
-    stringerWidth, stringerHeight, stringerCount,
-    bottomBoardWidth, bottomBoardThickness, bottomBoardCount,
-  } = dimensions;
+  const d = dimensions;
+  const length = parseFloat(d.length) || 0;
+  const width = parseFloat(d.width) || 0;
+  const topBoardWidth = parseFloat(d.topBoardWidth) || 0;
+  const topBoardThickness = parseFloat(d.topBoardThickness) || 0;
+  const topBoardCount = parseFloat(d.topBoardCount) || 0;
+  const stringerWidth = parseFloat(d.stringerWidth) || 0;
+  const stringerHeight = parseFloat(d.stringerHeight) || 0;
+  const stringerCount = parseFloat(d.stringerCount) || 0;
+  const bottomBoardWidth = parseFloat(d.bottomBoardWidth) || 0;
+  const bottomBoardThickness = parseFloat(d.bottomBoardThickness) || 0;
+  const bottomBoardCount = parseFloat(d.bottomBoardCount) || 0;
 
   const totalH  = topBoardThickness + stringerHeight + bottomBoardThickness;
   const topBY   = bottomBoardThickness + stringerHeight;
   const strY    = bottomBoardThickness;
+
+  const maxDim = Math.max(length, width);
+  const fs  = maxDim * 0.035;
+  const sw  = maxDim * 0.001;
+  const ext = maxDim * 0.13;
 
   const botSpacing = bottomBoardCount > 1
     ? (length - bottomBoardCount * bottomBoardWidth) / (bottomBoardCount - 1) : 0;
@@ -62,7 +73,7 @@ const PalletVisualizer = ({ dimensions, unit }) => {
     const rgt  = `M${B.x},${B.y} L${G.x},${G.y} L${F.x},${F.y} L${C.x},${C.y}Z`;
 
     return (
-      <g key={key} stroke={TONE.stroke} strokeWidth="1.1"
+      <g key={key} stroke={TONE.stroke} strokeWidth={sw}
          strokeLinejoin="round" strokeLinecap="round">
         <path d={face} fill={c.f} />
         <path d={rgt}  fill={c.r} />
@@ -73,24 +84,26 @@ const PalletVisualizer = ({ dimensions, unit }) => {
 
   // ── Geometry elements ─────────────────────────────────────────────────────
   const els = [];
-  for (let i = 0; i < bottomBoardCount; i++) {
-    const z = i * (bottomBoardWidth + botSpacing);
-    els.push(box(0, 0, z, width, bottomBoardThickness, bottomBoardWidth, `b${i}`, TONE.bot));
+
+  // 1. Bottom boards (Bottom layer: run along X, space along Z)
+  if (bottomBoardCount > 0) {
+    for (let i = 0; i < bottomBoardCount; i++) {
+      const z = i * (bottomBoardWidth + botSpacing);
+      els.push(box(0, 0, z, width, bottomBoardThickness, bottomBoardWidth, `b${i}`, TONE.bot));
+    }
   }
+
+  // 2. Stringers (Middle layer: run along Z, space along X)
   for (let i = 0; i < stringerCount; i++) {
     const x = i * (stringerWidth + strSpacing);
     els.push(box(x, strY, 0, stringerWidth, stringerHeight, length, `s${i}`, TONE.str));
   }
+
+  // 3. Top boards (Top layer: run along X, space along Z)
   for (let i = 0; i < topBoardCount; i++) {
     const z = i * (topBoardWidth + topSpacing);
     els.push(box(0, topBY, z, width, topBoardThickness, topBoardWidth, `t${i}`, TONE.top));
   }
-
-  // ── Annotation sizing ─────────────────────────────────────────────────────
-  const maxDim = Math.max(length, width);
-  const fs  = Math.max(22, maxDim * 0.031);
-  const sw  = Math.max(0.8, maxDim * 0.0013);
-  const ext = maxDim * 0.13;
 
   // ── SVG text+bg label ────────────────────────────────────────────────────
   const lbl = (key, cx, cy, text) => {
@@ -128,7 +141,7 @@ const PalletVisualizer = ({ dimensions, unit }) => {
           stroke={TONE.ext} strokeWidth={sw}
           strokeDasharray={`${sw*4},${sw*3}`} />
         <line x1={sx} y1={sy} x2={ex} y2={ey}
-          stroke={TONE.dim} strokeWidth={sw*1.3}
+          stroke={TONE.dim} strokeWidth={sw}
           markerStart="url(#arr)" markerEnd="url(#arr)" />
         {lbl(key+'l', mx, my, text)}
       </g>
@@ -141,53 +154,40 @@ const PalletVisualizer = ({ dimensions, unit }) => {
     return dimLine(key, pA.x, pA.y, pB.x, pB.y, ox, oy, text);
   };
 
+  // ── Annotation sizing ─────────────────────────────────────────────────────
   const dirX = { x: COS30, y: SIN30 };
   const dirZ = { x: -COS30, y: SIN30 };
 
-  const lOx = dirX.x * ext * 2.2, lOy = dirX.y * ext * 2.2;
-  const wOx = dirZ.x * ext * 2.2, wOy = dirZ.y * ext * 2.2;
-  const hOx = dirX.x * ext * 3.6, hOy = dirX.y * ext * 3.6;
-
   const leftOx = -dirX.x * ext * 1.2, leftOy = -dirX.y * ext * 1.2;
-  const frontOx = dirZ.x * ext * 1.1, frontOy = dirZ.y * ext * 1.1;
-  const rightOx = dirX.x * ext * 1.6, rightOy = dirX.y * ext * 1.6;
-  const rightInnerOx = dirX.x * ext * 1.1, rightInnerOy = dirX.y * ext * 1.1;
+  const rightOx = dirX.x * ext * 1.2, rightOy = dirX.y * ext * 1.2;
+  const frontOx = dirZ.x * ext * 1.2, frontOy = dirZ.y * ext * 1.2;
+
+  const wOx = dirZ.x * ext * 2.5, wOy = dirZ.y * ext * 2.5; // Width on Front-Left
+  const lOx = dirX.x * ext * 2.5, lOy = dirX.y * ext * 2.5; // Length on Front-Right
+  const hOx = dirX.x * ext * 2.5, hOy = dirX.y * ext * 2.5;
 
   const dims = [];
 
-  // Overall Length
-  dims.push(dimLine3D('OL', {x:width,y:0,z:0}, {x:width,y:0,z:length}, lOx, lOy, `L: ${length.toFixed(0)} ${unit}`));
-  // Overall Width
-  dims.push(dimLine3D('OW', {x:0,y:0,z:length}, {x:width,y:0,z:length}, wOx, wOy, `W: ${width.toFixed(0)} ${unit}`));
-  // Overall Height
-  dims.push(dimLine3D('OH', {x:width,y:0,z:0}, {x:width,y:totalH,z:0}, hOx, hOy, `H: ${totalH.toFixed(0)} ${unit}`));
+  // Overall Width (Front-Left side, Bottom-Left)
+  dims.push(dimLine3D('OW', {x:0,y:0,z:length}, {x:width,y:0,z:length}, wOx, wOy, `W: ${width.toFixed(unit === 'in' ? 2 : 0)} ${unit}`));
+  // Overall Length (Front-Right side, Bottom-Right)
+  dims.push(dimLine3D('OL', {x:width,y:0,z:0}, {x:width,y:0,z:length}, lOx, lOy, `L: ${length.toFixed(unit === 'in' ? 2 : 0)} ${unit}`));
+  // Overall Height (Right side)
+  dims.push(dimLine3D('OH', {x:width,y:0,z:0}, {x:width,y:totalH,z:0}, hOx, hOy, `H: ${totalH.toFixed(unit === 'in' ? 2 : 0)} ${unit}`));
 
-  // Detailed Top Board
-  if (topBoardCount > 0) {
-    const midX = width / 2;
-    dims.push(dimLine3D('TBW', {x:midX,y:totalH,z:0}, {x:midX,y:totalH,z:topBoardWidth}, 0, 0, `W: ${topBoardWidth.toFixed(0)} ${unit}`));
-    if (topBoardCount > 1) {
-      dims.push(dimLine3D('TBG', {x:midX,y:totalH,z:topBoardWidth}, {x:midX,y:totalH,z:topBoardWidth+topSpacing}, 0, 0, `Gap: ${topSpacing.toFixed(0)} ${unit}`));
-    }
-    dims.push(dimLine3D('TBT', {x:width,y:topBY,z:0}, {x:width,y:totalH,z:0}, rightOx, rightOy, `T: ${topBoardThickness.toFixed(0)} ${unit}`));
+  // Top Board Gaps (Left side)
+  if (topBoardCount > 1) {
+    dims.push(dimLine3D('TBG', {x:0,y:totalH,z:topBoardWidth}, {x:0,y:totalH,z:topBoardWidth+topSpacing}, leftOx, leftOy, `Gap: ${topSpacing.toFixed(unit === 'in' ? 2 : 0)} ${unit}`));
   }
 
-  // Detailed Stringer
-  if (stringerCount > 0) {
-    dims.push(dimLine3D('STW', {x:0,y:0,z:length}, {x:stringerWidth,y:0,z:length}, frontOx, frontOy, `W: ${stringerWidth.toFixed(0)} ${unit}`));
-    if (stringerCount > 1) {
-      dims.push(dimLine3D('STG', {x:stringerWidth,y:0,z:length}, {x:stringerWidth+strSpacing,y:0,z:length}, frontOx, frontOy, `Gap: ${strSpacing.toFixed(0)} ${unit}`));
-    }
-    dims.push(dimLine3D('STH', {x:width,y:strY,z:0}, {x:width,y:strY+stringerHeight,z:0}, rightOx, rightOy, `H: ${stringerHeight.toFixed(0)} ${unit}`));
+  // Stringer Gaps (Front-Left side, sitting on the right)
+  if (stringerCount > 1) {
+    dims.push(dimLine3D('STG', {x:width-stringerWidth,y:0,z:length}, {x:width-stringerWidth-strSpacing,y:0,z:length}, frontOx, frontOy, `Gap: ${strSpacing.toFixed(unit === 'in' ? 2 : 0)} ${unit}`));
   }
 
-  // Detailed Bottom Board
-  if (bottomBoardCount > 0) {
-    dims.push(dimLine3D('BBW', {x:width,y:bottomBoardThickness,z:0}, {x:width,y:bottomBoardThickness,z:bottomBoardWidth}, rightInnerOx, rightInnerOy, `W: ${bottomBoardWidth.toFixed(0)} ${unit}`));
-    if (bottomBoardCount > 1) {
-      dims.push(dimLine3D('BBG', {x:width,y:bottomBoardThickness,z:bottomBoardWidth}, {x:width,y:bottomBoardThickness,z:bottomBoardWidth+botSpacing}, rightInnerOx, rightInnerOy, `Gap: ${botSpacing.toFixed(0)} ${unit}`));
-    }
-    dims.push(dimLine3D('BBT', {x:width,y:0,z:0}, {x:width,y:bottomBoardThickness,z:0}, rightOx, rightOy, `T: ${bottomBoardThickness.toFixed(0)} ${unit}`));
+  // Bottom Board Gaps (Front-Right side, sitting on the left/front)
+  if (bottomBoardCount > 1) {
+    dims.push(dimLine3D('BBG', {x:width,y:0,z:length-bottomBoardWidth}, {x:width,y:0,z:length-bottomBoardWidth-botSpacing}, rightOx, rightOy, `Gap: ${botSpacing.toFixed(unit === 'in' ? 2 : 0)} ${unit}`));
   }
 
   if (minX === Infinity) {

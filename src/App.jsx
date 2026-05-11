@@ -102,7 +102,6 @@ function App() {
               <button className={`unit-btn-sm ${unit === 'cm' ? 'active' : ''}`} onClick={() => setUnit('cm')}>cm</button>
               <button className={`unit-btn-sm ${unit === 'in' ? 'active' : ''}`} onClick={() => setUnit('in')}>in</button>
             </div>
-            <button className="btn-export" onClick={exportPNG}>Export PNG</button>
           </div>
 
           {/* Overall dimensions */}
@@ -188,32 +187,52 @@ function App() {
 
         {/* Bill of Materials */}
         <div className="bom-section">
-          <table className="bom-table">
-            <thead>
-              <tr>
-                <th>Component</th>
-                <th>Dimensions (L × W × T) {unit}</th>
-                <th>Qty</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Top Boards</td>
-                <td>{dimensions.width} × {dimensions.topBoardWidth} × {dimensions.topBoardThickness}</td>
-                <td>{dimensions.topBoardCount}</td>
-              </tr>
-              <tr>
-                <td>Stringers</td>
-                <td>{dimensions.length} × {dimensions.stringerWidth} × {dimensions.stringerHeight}</td>
-                <td>{dimensions.stringerCount}</td>
-              </tr>
-              <tr>
-                <td>Bottom Boards</td>
-                <td>{dimensions.width} × {dimensions.bottomBoardWidth} × {dimensions.bottomBoardThickness}</td>
-                <td>{dimensions.bottomBoardCount}</td>
-              </tr>
-            </tbody>
-          </table>
+          <div className="bom-header">
+            <div className="bom-title-group">
+              <h2>3. Materials & cut list</h2>
+              <p>Exact pieces and dimensions needed to build this pallet.</p>
+            </div>
+            <div className="bom-actions">
+              <button className="bom-btn secondary" onClick={exportPNG}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Export Pallet Isometric Blueprint
+              </button>
+              <button className="bom-btn secondary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                Copy
+              </button>
+            </div>
+          </div>
+
+          <div className="bom-card">
+            <h3 className="bom-card-title">Cut list (L × W × T)</h3>
+            <table className="bom-table">
+              <thead>
+                <tr>
+                  <th>Part</th>
+                  <th>Dimensions</th>
+                  <th className="txt-right">Pieces</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="part-name">Top deck board</td>
+                  <td className="dim-val">{dimensions.width} × {dimensions.topBoardWidth} × {dimensions.topBoardThickness} {unit}</td>
+                  <td className="pieces-val">{dimensions.topBoardCount}</td>
+                </tr>
+                <tr>
+                  <td className="part-name">Stringer (runner)</td>
+                  <td className="dim-val">{dimensions.length} × {dimensions.stringerWidth} × {dimensions.stringerHeight} {unit}</td>
+                  <td className="pieces-val">{dimensions.stringerCount}</td>
+                </tr>
+                <tr>
+                  <td className="part-name">Bottom deck board</td>
+                  <td className="dim-val">{dimensions.width} × {dimensions.bottomBoardWidth} × {dimensions.bottomBoardThickness} {unit}</td>
+                  <td className="pieces-val">{dimensions.bottomBoardCount}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
         {/* Ad 4: Rectangle below BOM */}
@@ -222,6 +241,19 @@ function App() {
         </div>
 
       </div>
+
+      <footer className="app-footer">
+        <div className="footer-content">
+          <div className="footer-left">
+            <span className="copyright">© 2026 Pallet Blueprint. All rights reserved.</span>
+            <span className="divider">|</span>
+            <span className="tagline">Industrial Pallet Blueprint Engine</span>
+          </div>
+          <div className="footer-right">
+            <span className="version">v1.0.2</span>
+          </div>
+        </div>
+      </footer>
     </>
   )
 }
