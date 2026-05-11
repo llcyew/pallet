@@ -92,92 +92,91 @@ function App() {
 
       <div className="app-container">
 
-        {/* Horizontal input bar — all controls visible in one row */}
-        <div className="input-bar" id="tool">
+        <div className="main-layout">
+          {/* Left Panel: Vertical Inputs */}
+          <aside className="left-panel">
+            <div className="input-bar-vertical" id="tool">
+              {/* Unit toggle */}
+              <div className="unit-selector-card">
+                <div className="unit-selector-bar">
+                  <button className={`unit-btn-sm ${unit === 'mm' ? 'active' : ''}`} onClick={() => setUnit('mm')}>mm</button>
+                  <button className={`unit-btn-sm ${unit === 'cm' ? 'active' : ''}`} onClick={() => setUnit('cm')}>cm</button>
+                  <button className={`unit-btn-sm ${unit === 'in' ? 'active' : ''}`} onClick={() => setUnit('in')}>in</button>
+                </div>
+              </div>
 
-          {/* Unit toggle + Export */}
-          <div className="unit-export">
-            <div className="unit-selector-bar">
-              <button className={`unit-btn-sm ${unit === 'mm' ? 'active' : ''}`} onClick={() => setUnit('mm')}>mm</button>
-              <button className={`unit-btn-sm ${unit === 'cm' ? 'active' : ''}`} onClick={() => setUnit('cm')}>cm</button>
-              <button className={`unit-btn-sm ${unit === 'in' ? 'active' : ''}`} onClick={() => setUnit('in')}>in</button>
-            </div>
-          </div>
+              {/* Overall dimensions */}
+              <div className="input-card-compact">
+                <h3>Overall ({unit})</h3>
+                <div className="input-pair-compact">
+                  <label>Length</label>
+                  <input type="number" name="length" value={dimensions.length} onChange={handleChange} />
+                </div>
+                <div className="input-pair-compact">
+                  <label>Width</label>
+                  <input type="number" name="width" value={dimensions.width} onChange={handleChange} />
+                </div>
+              </div>
 
-          {/* Overall dimensions */}
-          <div className="input-card">
-            <h3>Overall ({unit})</h3>
-            <div className="input-pair">
-              <label>Length</label>
-              <input type="number" name="length" value={dimensions.length} onChange={handleChange} />
-            </div>
-            <div className="input-pair">
-              <label>Width</label>
-              <input type="number" name="width" value={dimensions.width} onChange={handleChange} />
-            </div>
-          </div>
+              {/* Top deck boards */}
+              <div className="input-card-compact">
+                <h3>Top Deck ({unit})</h3>
+                <div className="input-pair-compact">
+                  <label>Count</label>
+                  <input type="number" name="topBoardCount" value={dimensions.topBoardCount} onChange={handleChange} />
+                </div>
+                <div className="input-pair-compact">
+                  <label>Width</label>
+                  <input type="number" name="topBoardWidth" value={dimensions.topBoardWidth} onChange={handleChange} />
+                </div>
+                <div className="input-pair-compact">
+                  <label>Thick</label>
+                  <input type="number" name="topBoardThickness" value={dimensions.topBoardThickness} onChange={handleChange} />
+                </div>
+              </div>
 
-          {/* Top deck boards */}
-          <div className="input-card">
-            <h3>Top Deck ({unit})</h3>
-            <div className="input-pair">
-              <label>Count</label>
-              <input type="number" name="topBoardCount" value={dimensions.topBoardCount} onChange={handleChange} />
-            </div>
-            <div className="input-pair">
-              <label>Board W</label>
-              <input type="number" name="topBoardWidth" value={dimensions.topBoardWidth} onChange={handleChange} />
-            </div>
-            <div className="input-pair">
-              <label>Thickness</label>
-              <input type="number" name="topBoardThickness" value={dimensions.topBoardThickness} onChange={handleChange} />
-            </div>
-          </div>
+              {/* Stringers */}
+              <div className="input-card-compact">
+                <h3>Stringers ({unit})</h3>
+                <div className="input-pair-compact">
+                  <label>Count</label>
+                  <input type="number" name="stringerCount" value={dimensions.stringerCount} onChange={handleChange} />
+                </div>
+                <div className="input-pair-compact">
+                  <label>Width</label>
+                  <input type="number" name="stringerWidth" value={dimensions.stringerWidth} onChange={handleChange} />
+                </div>
+                <div className="input-pair-compact">
+                  <label>Height</label>
+                  <input type="number" name="stringerHeight" value={dimensions.stringerHeight} onChange={handleChange} />
+                </div>
+              </div>
 
-          {/* Stringers */}
-          <div className="input-card">
-            <h3>Stringers ({unit})</h3>
-            <div className="input-pair">
-              <label>Count</label>
-              <input type="number" name="stringerCount" value={dimensions.stringerCount} onChange={handleChange} />
+              {/* Bottom deck boards */}
+              <div className="input-card-compact">
+                <h3>Bottom Deck ({unit})</h3>
+                <div className="input-pair-compact">
+                  <label>Count</label>
+                  <input type="number" name="bottomBoardCount" value={dimensions.bottomBoardCount} onChange={handleChange} />
+                </div>
+                <div className="input-pair-compact">
+                  <label>Width</label>
+                  <input type="number" name="bottomBoardWidth" value={dimensions.bottomBoardWidth} onChange={handleChange} />
+                </div>
+                <div className="input-pair-compact">
+                  <label>Thick</label>
+                  <input type="number" name="bottomBoardThickness" value={dimensions.bottomBoardThickness} onChange={handleChange} />
+                </div>
+              </div>
             </div>
-            <div className="input-pair">
-              <label>Width</label>
-              <input type="number" name="stringerWidth" value={dimensions.stringerWidth} onChange={handleChange} />
-            </div>
-            <div className="input-pair">
-              <label>Height</label>
-              <input type="number" name="stringerHeight" value={dimensions.stringerHeight} onChange={handleChange} />
-            </div>
-          </div>
+          </aside>
 
-          {/* Bottom deck boards */}
-          <div className="input-card">
-            <h3>Bottom Deck ({unit})</h3>
-            <div className="input-pair">
-              <label>Count</label>
-              <input type="number" name="bottomBoardCount" value={dimensions.bottomBoardCount} onChange={handleChange} />
+          {/* Right Panel: Visualizer */}
+          <main className="right-panel">
+            <div className="visualizer-container">
+              <PalletVisualizer dimensions={dimensions} unit={unit} />
             </div>
-            <div className="input-pair">
-              <label>Board W</label>
-              <input type="number" name="bottomBoardWidth" value={dimensions.bottomBoardWidth} onChange={handleChange} />
-            </div>
-            <div className="input-pair">
-              <label>Thickness</label>
-              <input type="number" name="bottomBoardThickness" value={dimensions.bottomBoardThickness} onChange={handleChange} />
-            </div>
-          </div>
-
-        </div>
-
-        {/* Ad 2: Banner — separates controls from results */}
-        <div className="ad-row">
-          <AdSlot size="banner" slot="SLOT_ID_2" />
-        </div>
-
-        {/* Visualizer — full width, 16:9 */}
-        <div className="visualizer-section">
-          <PalletVisualizer dimensions={dimensions} unit={unit} />
+          </main>
         </div>
 
         {/* Ad 3: Banner between visualizer and BOM */}

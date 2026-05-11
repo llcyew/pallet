@@ -534,3 +534,110 @@ input:focus, select:focus {
     text-align: center;
   }
 }
+
+/* ── Side-by-Side Layout ────────────────────────── */
+.main-layout {
+  display: flex;
+  gap: 20px;
+  margin: 20px 0;
+  align-items: stretch; /* Stretch both columns to match height */
+}
+
+.left-panel {
+  flex: 0 0 260px;
+  position: sticky;
+  top: 20px;
+}
+
+.right-panel {
+  flex: 1;
+  min-width: 0;
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+}
+
+.visualizer-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Compact Inputs ───────────────────────────── */
+.input-bar-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-card-compact {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  background: #fff;
+}
+
+.input-card-compact h3 {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 4px;
+}
+
+.input-pair-compact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.input-pair-compact label {
+  font-size: 0.68rem;
+  color: #666;
+}
+
+.input-pair-compact input {
+  width: 65px;
+  padding: 2px 4px;
+  font-size: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 2px;
+  text-align: right;
+}
+
+.unit-selector-card {
+  background: #f8f8f8;
+  padding: 4px;
+  border-radius: var(--radius-sm);
+}
+
+/* ── Mobile Overrides ─────────────────────────── */
+@media (max-width: 900px) {
+  .main-layout {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .left-panel {
+    flex: none;
+    width: 100%;
+    position: static;
+  }
+  .input-bar-vertical {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .input-card-compact {
+    flex: 1;
+    min-width: 140px;
+  }
+  .right-panel {
+    height: 400px; /* Fixed height for visualizer on mobile */
+  }
+}
