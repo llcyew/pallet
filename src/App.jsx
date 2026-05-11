@@ -95,6 +95,7 @@ function App() {
         <div className="main-layout">
           {/* Left Panel: Vertical Inputs */}
           <aside className="left-panel">
+            <h2 className="section-num-title">1. Input</h2>
             <div className="input-bar-vertical" id="tool">
               {/* Unit toggle */}
               <div className="unit-selector-card">
@@ -173,6 +174,9 @@ function App() {
 
           {/* Right Panel: Visualizer */}
           <main className="right-panel">
+            <div className="right-panel-header">
+              <h2 className="section-num-title">2. Isometric drawing</h2>
+            </div>
             <div className="visualizer-container">
               <PalletVisualizer dimensions={dimensions} unit={unit} />
             </div>

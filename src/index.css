@@ -641,3 +641,20 @@ input:focus, select:focus {
     height: 400px; /* Fixed height for visualizer on mobile */
   }
 }
+
+/* ── Section Titles ──────────────────────────── */
+.section-num-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.right-panel-header {
+  padding: 15px 20px 0;
+}
+
+.left-panel .section-num-title {
+  margin-bottom: 12px;
+}
