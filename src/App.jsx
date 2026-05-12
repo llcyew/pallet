@@ -24,6 +24,8 @@ function App() {
 
   const handleChange = (e) => {
     const { name, value } = e.target
+    // Prevent negative numbers
+    if (value !== '' && parseFloat(value) < 0) return
     setDimensions(prev => ({
       ...prev,
       [name]: value === '' ? '' : parseFloat(value)
@@ -111,11 +113,11 @@ function App() {
                 <h3>Overall ({unit})</h3>
                 <div className="input-pair-compact">
                   <label>Length</label>
-                  <input type="number" name="length" value={dimensions.length} onChange={handleChange} />
+                  <input type="number" name="length" value={dimensions.length} onChange={handleChange} min="0" />
                 </div>
                 <div className="input-pair-compact">
                   <label>Width</label>
-                  <input type="number" name="width" value={dimensions.width} onChange={handleChange} />
+                  <input type="number" name="width" value={dimensions.width} onChange={handleChange} min="0" />
                 </div>
               </div>
 
@@ -124,15 +126,15 @@ function App() {
                 <h3>Top Deck ({unit})</h3>
                 <div className="input-pair-compact">
                   <label>Count</label>
-                  <input type="number" name="topBoardCount" value={dimensions.topBoardCount} onChange={handleChange} />
+                  <input type="number" name="topBoardCount" value={dimensions.topBoardCount} onChange={handleChange} min="0" step="1" />
                 </div>
                 <div className="input-pair-compact">
                   <label>Width</label>
-                  <input type="number" name="topBoardWidth" value={dimensions.topBoardWidth} onChange={handleChange} />
+                  <input type="number" name="topBoardWidth" value={dimensions.topBoardWidth} onChange={handleChange} min="0" />
                 </div>
                 <div className="input-pair-compact">
                   <label>Thick</label>
-                  <input type="number" name="topBoardThickness" value={dimensions.topBoardThickness} onChange={handleChange} />
+                  <input type="number" name="topBoardThickness" value={dimensions.topBoardThickness} onChange={handleChange} min="0" />
                 </div>
               </div>
 
@@ -141,15 +143,15 @@ function App() {
                 <h3>Stringers ({unit})</h3>
                 <div className="input-pair-compact">
                   <label>Count</label>
-                  <input type="number" name="stringerCount" value={dimensions.stringerCount} onChange={handleChange} />
+                  <input type="number" name="stringerCount" value={dimensions.stringerCount} onChange={handleChange} min="0" step="1" />
                 </div>
                 <div className="input-pair-compact">
                   <label>Width</label>
-                  <input type="number" name="stringerWidth" value={dimensions.stringerWidth} onChange={handleChange} />
+                  <input type="number" name="stringerWidth" value={dimensions.stringerWidth} onChange={handleChange} min="0" />
                 </div>
                 <div className="input-pair-compact">
                   <label>Height</label>
-                  <input type="number" name="stringerHeight" value={dimensions.stringerHeight} onChange={handleChange} />
+                  <input type="number" name="stringerHeight" value={dimensions.stringerHeight} onChange={handleChange} min="0" />
                 </div>
               </div>
 
@@ -158,15 +160,15 @@ function App() {
                 <h3>Bottom Deck ({unit})</h3>
                 <div className="input-pair-compact">
                   <label>Count</label>
-                  <input type="number" name="bottomBoardCount" value={dimensions.bottomBoardCount} onChange={handleChange} />
+                  <input type="number" name="bottomBoardCount" value={dimensions.bottomBoardCount} onChange={handleChange} min="0" step="1" />
                 </div>
                 <div className="input-pair-compact">
                   <label>Width</label>
-                  <input type="number" name="bottomBoardWidth" value={dimensions.bottomBoardWidth} onChange={handleChange} />
+                  <input type="number" name="bottomBoardWidth" value={dimensions.bottomBoardWidth} onChange={handleChange} min="0" />
                 </div>
                 <div className="input-pair-compact">
                   <label>Thick</label>
-                  <input type="number" name="bottomBoardThickness" value={dimensions.bottomBoardThickness} onChange={handleChange} />
+                  <input type="number" name="bottomBoardThickness" value={dimensions.bottomBoardThickness} onChange={handleChange} min="0" />
                 </div>
               </div>
             </div>
